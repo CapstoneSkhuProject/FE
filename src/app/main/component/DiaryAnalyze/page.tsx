@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import feelChecker from "@/utils/feelChecker";
 export default function DiaryAnalyze({
   setIsEditorOpen,
+  setIsAnalize,
   feel,
   diaryText,
 }: any) {
@@ -15,33 +15,57 @@ export default function DiaryAnalyze({
   const [num3, setNum3] = useState(1);
 
   useEffect(() => {
-    if (feel === "happy") {
+    if (feel[0] === "happy") {
       setEmoticons("😁");
       setMine("행복함");
-      setNum1(50 + Math.floor(Math.random() * 15));
-      setNum2(Math.floor(Math.random() * 20) + 1);
-    } else if (feel === "angry") {
+      setNum1(50 + Math.floor(Math.random() * 15) + feel[1]);
+      setNum2(Math.min(25, feel[3] * 3));
+      setNum3(Math.min(25, feel[2] * 3));
+    } else if (feel[0] === "angry") {
       setEmoticons("😡");
       setMine("화남");
-      setNum3(60 + Math.floor(Math.random()) * 15 + 1);
-      setNum2(Math.floor(Math.random()) * 20 + 1);
-    } else if (feel === "normal") {
+      setNum3(50 + Math.floor(Math.random() * 15) + feel[3]);
+      setNum1(Math.min(25, feel[1] * 3));
+      setNum2(Math.min(25, feel[2] * 3));
+    } else if (feel[0] === "sad") {
+      setEmoticons("😭");
+      setMine("슬픔");
+      setNum2(50 + Math.floor(Math.random() * 15) + feel[2]);
+      setNum1(Math.min(25, feel[1] * 3));
+      setNum3(Math.min(25, feel[3] * 3));
+    } else if (feel[0] === "normal") {
       setEmoticons("😌");
       setMine("평범");
-      setNum3(Math.floor(Math.random()) * 45 + 1);
-      setNum2(60 + Math.floor(Math.random()) * 20 + 1);
-      setNum1(Math.floor(Math.random()) * 50 + 1);
+      setNum1(Math.min(45, feel[1] * 3));
+      setNum2(Math.min(45, feel[3] * 3));
+      setNum3(Math.min(45, feel[2] * 3));
     }
+    console.log(feel);
   }, [feel]);
 
-  useEffect(() => {});
+  useEffect(() => {
+    if (num1 !== 1 && num2 !== 1) {
+      console.log(num1, num2, num3);
+    }
+  }, [num1, num2, num3]);
+
+  function onClickDeleteBtn() {
+    localStorage.removeItem("5f");
+    localStorage.removeItem("5c");
+    setIsEditorOpen(false);
+  }
 
   return (
     <div className="bg-gray-100 w-full h-full">
       <div className="flex justify-between">
         <div />
         <button
-          onClick={() => setIsEditorOpen(false)}
+          onClick={() => {
+            if (feel === "fail" || feel === "") {
+              setIsAnalize(false);
+            }
+            setIsEditorOpen(false);
+          }}
           className="mr-8 mt-4 text-xl"
         >
           X
@@ -78,7 +102,7 @@ export default function DiaryAnalyze({
                 </div>
               </div>
               <div className="flex w-[92%] mx-auto mt-2">
-                <p className="mx-3 font-bold ">중립</p>
+                <p className="mx-3 font-bold ">우울</p>
                 <div className="w-[80%] h-[1.6rem] bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className={`h-[1.6rem] bg-yellow-500  rounded-full overflow-hidden`}
@@ -89,7 +113,7 @@ export default function DiaryAnalyze({
                 </div>
               </div>
               <div className="flex w-[92%] mx-auto my-2">
-                <p className="mx-3 font-bold ">부정</p>
+                <p className="mx-3 font-bold ">분노</p>
                 <div className="w-[80%] h-[1.6rem] bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className={`h-[1.6rem] bg-red-500  rounded-full overflow-hidden`}
@@ -106,12 +130,20 @@ export default function DiaryAnalyze({
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setIsEditorOpen(false)}
-            className="bg-[#01C1F8] w-[92%] h-[4rem] rounded-md text-white mx-4 mt-6"
-          >
-            감정 통계 보러가기
-          </button>
+          <div className="flex">
+            <button
+              onClick={() => setIsEditorOpen(false)}
+              className="bg-[#01C1F8] w-[92%] h-[4rem] rounded-md text-white mx-4 mt-6"
+            >
+              감정 통계 보러가기
+            </button>
+            <button
+              onClick={onClickDeleteBtn}
+              className="bg-red-400 w-[92%] h-[4rem] rounded-md text-white mx-4 mt-6"
+            >
+              삭제하기
+            </button>
+          </div>
         </div>
       ) : (
         <div className="bg-white w-[94%] h-[40rem] mx-auto">

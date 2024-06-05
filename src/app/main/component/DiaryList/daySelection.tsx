@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 
-export default function DaySelection({ days }: any) {
+export default function DaySelection({
+  days,
+  setSelectedDay,
+  setIsEditorOpen,
+}: any) {
   const [emoticons, setEmoticons] = useState("😌");
 
   useEffect(() => {
@@ -17,14 +21,26 @@ export default function DaySelection({ days }: any) {
   }, [days]);
 
   function getEmoticons(item: any) {
-    if (item.feel === "happy") {
+    if (item.feel[0] === "happy") {
       return "😁";
-    } else if (item.feel === "angry") {
+    } else if (item.feel[0] === "angry") {
       return "😡";
-    } else if (item.feel === "normal") {
+    } else if (item.feel[0] === "normal") {
       return "😌";
+    } else if (item.feel[0] === "sad") {
+      return "😭";
     }
     return "";
+  }
+
+  function onClickDayButton(index: number) {
+    if (!days[index].feel) {
+      alert("해당일자에 작성된 일기 내용이 없습니다!");
+      return;
+    }
+    console.log(index);
+    setSelectedDay(index);
+    setIsEditorOpen(true);
   }
 
   return (
@@ -46,7 +62,11 @@ export default function DaySelection({ days }: any) {
             </div>
           </div>
         ) : (
-          <div className="w-full mx-auto mt-2" key={item.days}>
+          <button
+            className="w-full mx-auto mt-2"
+            key={item.days}
+            onClick={() => onClickDayButton(index)}
+          >
             <p className="text-center">{item.num}</p>
             <p className="text-center text-slate-200">{item.days}</p>
             <div className="w-[93%] h-[55%] mx-auto border-2 bg-gray-200">
@@ -56,7 +76,7 @@ export default function DaySelection({ days }: any) {
                 </p>
               ) : null}{" "}
             </div>
-          </div>
+          </button>
         )
       )}
     </div>
